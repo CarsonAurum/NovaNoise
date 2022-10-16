@@ -2,7 +2,6 @@
 //  Created by Carson Rau on 5/5/22.
 //
 
-import Darwin
 import NovaCore
 
 // MARK: - Add
@@ -133,7 +132,7 @@ public final class Power: Module {
         super.init(sourceCount: 2)
     }
     public func getValue(x: Double, y: Double, z: Double) throws -> Double {
-        try pow(
+        try Double.pow(
             modules[0].unwrapOrThrow(ModuleError.noModule).getValue(x: x, y: y, z: z),
             modules[1].unwrapOrThrow(ModuleError.noModule).getValue(x: x, y: y, z: z)
         )

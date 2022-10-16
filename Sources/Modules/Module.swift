@@ -40,6 +40,7 @@ open class BaseModule {
         case noModule
         case invalidIndex
         case invalidParameter
+        case pointsNeeded
     }
     internal var modules: [Module?]
     public init(sourceCount count: Int) {
