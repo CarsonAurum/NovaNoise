@@ -133,8 +133,8 @@ public final class Power: Module {
     }
     public func getValue(x: Double, y: Double, z: Double) throws -> Double {
         try Double.pow(
-            modules[0].unwrapOrThrow(ModuleError.noModule).getValue(x: x, y: y, z: z),
-            modules[1].unwrapOrThrow(ModuleError.noModule).getValue(x: x, y: y, z: z)
+            modules[0].unwrapOrThrow(ModuleError.noModule).getValue((x, y, z)),
+            modules[1].unwrapOrThrow(ModuleError.noModule).getValue((x, y, z))
         )
     }
 }
@@ -194,34 +194,34 @@ public final class Select: Module {
                 let lowerCurve = lowerBound - edgeFalloff, upperCurve = lowerBound + edgeFalloff
                 alpha = sCurve3((controlValue - lowerCurve) / (upperCurve - lowerCurve))
                 return linearInterp(
-                    try modules[0].unwrapOrThrow(ModuleError.noModule).getValue(x: x, y: y, z: z),
-                    try modules[1].unwrapOrThrow(ModuleError.noModule).getValue(x: x, y: y, z: z),
+                    try modules[0].unwrapOrThrow(ModuleError.noModule).getValue((x, y, z)),
+                    try modules[1].unwrapOrThrow(ModuleError.noModule).getValue((x, y, z)),
                     alpha)
             } else if controlValue < upperBound - edgeFalloff {
                 return try modules[1]
                     .unwrapOrThrow(ModuleError.noModule)
-                    .getValue(x: x, y: y, z: z)
+                    .getValue((x, y, z))
             } else if controlValue < upperBound + edgeFalloff {
                 let lowerCurve = upperBound - edgeFalloff, upperCurve = upperBound + edgeFalloff
                 alpha = sCurve3((controlValue - lowerCurve) / (upperCurve - lowerCurve))
                 return linearInterp(
-                    try modules[1].unwrapOrThrow(ModuleError.noModule).getValue(x: x, y: y, z: z),
-                    try modules[0].unwrapOrThrow(ModuleError.noModule).getValue(x: x, y: y, z: z),
+                    try modules[1].unwrapOrThrow(ModuleError.noModule).getValue((x, y, z)),
+                    try modules[0].unwrapOrThrow(ModuleError.noModule).getValue((x, y, z)),
                     alpha)
             } else {
                 return try modules[0]
                     .unwrapOrThrow(ModuleError.noModule)
-                    .getValue(x: x, y: y, z: z)
+                    .getValue((x, y, z))
             }
         } else {
             if !controlValue.isBetween(lowerBound...upperBound) {
                 return try modules[0]
                     .unwrapOrThrow(ModuleError.noModule)
-                    .getValue(x: x, y: y, z: z)
+                    .getValue((x, y, z))
             } else {
                 return try modules[1]
                     .unwrapOrThrow(ModuleError.noModule)
-                    .getValue(x: x, y: y, z: z)
+                    .getValue((x, y, z))
             }
         }
     }
