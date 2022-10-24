@@ -2,6 +2,7 @@
 //  Created by Carson Rau on 10/15/22.
 //
 
+
 import NovaCore
 
 // MARK: - Abs
@@ -11,7 +12,7 @@ public final class Abs: Module {
         super.init(sourceCount: 1)
     }
     public func getValue(x: Double, y: Double, z: Double) throws -> Double {
-        try abs(modules[0].unwrapOrThrow(ModuleError.noModule).getValue(x: x, y: y, z: z))
+        try abs(modules[0].unwrapModule().getValue(x, y, z))
     }
 }
 
@@ -37,10 +38,7 @@ public final class Clamp: Module {
         try setBounds(lower: lower, upper: upperBound)
     }
     public func getValue(x: Double, y: Double, z: Double) throws -> Double {
-        try modules[0]
-            .unwrapOrThrow(ModuleError.noModule)
-            .getValue(x: x, y: y, z: z)
-            .clamped(to: lowerBound...upperBound)
+        try modules[0].unwrapModule().getValue(x, y, z).clamped(to: lowerBound...upperBound)
     }
 }
 
@@ -67,8 +65,8 @@ public final class Curve: Module {
         guard controlPoints.count >= 4 else {
             throw ModuleError.pointsNeeded
         }
-        let value = try modules[0].unwrapOrThrow(ModuleError.noModule).getValue(x: x, y: y, z: z)
-        let pos = controlPoints.firstIndex(where: { value < $0.input })
+        let value = try modules[0].unwrapModule().getValue(x, y, z)
+        let pos = controlPoints.firstIndex { value < $0.input }
         guard let pos = pos else {
             throw ModuleError.pointsNeeded
         }
@@ -104,9 +102,7 @@ public final class Exponent: Module {
         super.init(sourceCount: 1)
     }
     public func getValue(x: Double, y: Double, z: Double) throws -> Double {
-        let value = try modules[0]
-            .unwrapOrThrow(ModuleError.noModule)
-            .getValue(x: x, y: y, z: z)
+        let value = try modules[0].unwrapModule().getValue(x, y, z)
         return Double.pow(abs((value + 1.0) / 2.0), exponent) * 2.0 - 1.0
     }
 }
@@ -118,7 +114,7 @@ public final class Invert: Module {
         super.init(sourceCount: 1)
     }
     public func getValue(x: Double, y: Double, z: Double) throws -> Double {
-        try -modules[0].unwrapOrThrow(ModuleError.noModule).getValue(x: x, y: y, z: z)
+        try -modules[0].unwrapModule().getValue(x, y, z)
     }
 }
 
@@ -165,7 +161,7 @@ public final class RotatePoint: Module {
         let nx = matrix[0][0] * x + matrix[0][1] * y + matrix[0][2] * z
         let ny = matrix[1][0] * x + matrix[1][1] * y + matrix[1][2] * z
         let nz = matrix[2][0] * x + matrix[2][1] * y + matrix[2][2] * z
-        return try modules[0].unwrapOrThrow(ModuleError.noModule).getValue(x: nx, y: ny, z: nz)
+        return try modules[0].unwrapModule().getValue(nx, ny, nz)
     }
 }
 
@@ -182,7 +178,7 @@ public final class ScaleBias: Module {
         super.init(sourceCount: 1)
     }
     public func getValue(x: Double, y: Double, z: Double) throws -> Double {
-        try modules[0].unwrapOrThrow(ModuleError.noModule).getValue(x: x, y: y, z: z) * scale + bias
+        try modules[0].unwrapModule().getValue(x, y, z) * scale + bias
     }
 }
 
@@ -212,7 +208,7 @@ public final class Terrace: Module {
         }
     }
     public func getValue(x: Double, y: Double, z: Double) throws -> Double {
-        let value = try modules[0].unwrapOrThrow(ModuleError.noModule).getValue(x: x, y: y, z: z)
+        let value = try modules[0].unwrapModule().getValue(x, y, z)
         let pos = controlPoints.firstIndex(where: { value < $0 })
         guard let pos = pos else {
             throw ModuleError.pointsNeeded
@@ -249,11 +245,7 @@ public final class TranslatePoint: Module {
         super.init(sourceCount: 1)
     }
     public func getValue(x: Double, y: Double, z: Double) throws -> Double {
-        try modules[0].unwrapOrThrow(ModuleError.noModule).getValue(
-            x: x + xTranslation,
-            y: y + yTranslation,
-            z: z + zTranslation
-        )
+        try modules[0].unwrapModule().getValue(x + xTranslation, y + yTranslation, z + zTranslation)
     }
 }
 
@@ -296,8 +288,6 @@ public final class Turbulence: Module {
         let xDistort = try x + distortModules[0].getValue(x: x0, y: y0, z: z0) * power
         let yDistort = try y + distortModules[1].getValue(x: x1, y: y1, z: z1) * power
         let zDistort = try z + distortModules[2].getValue(x: x2, y: y2, z: z2) * power
-        return try modules[0]
-            .unwrapOrThrow(ModuleError.noModule)
-            .getValue(x: xDistort, y: yDistort, z: zDistort)
+        return try modules[0].unwrapModule().getValue(xDistort, yDistort, zDistort)
     }
 }

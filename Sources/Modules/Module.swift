@@ -25,13 +25,14 @@ public protocol ModuleProtocol {
 }
 // Convenience value funcs
 public extension ModuleProtocol {
-    /// A convenience function to access the core ``getValue(x:y:z:)`` function.
-    ///
-    /// - Parameter value: A tuple in the form (x, y, z).
-    /// - Throws: Any errors from the ``getValue(x:y:z:)`` function.
-    /// - Returns The calculated output value from ``getValue(x:y:z:)``
+    func getValue(_ x: Double, _ y: Double, _ z: Double) throws -> Double {
+        try getValue(x: x, y: y, z: z)
+    }
     func getValue(_ value: (Double, Double, Double)) throws -> Double {
         try getValue(x: value.0, y: value.1, z: value.2)
+    }
+    func getValue(_ point: Point3D) throws -> Double {
+        try getValue(x: point.x, y: point.y, z: point.z)
     }
 }
 /// A base class for noise modules.
@@ -54,16 +55,16 @@ open class BaseModule {
         guard index.isBetween(0 ... modules.count) else {
             throw ModuleError.invalidIndex
         }
-        return try modules[index].unwrapOrThrow(ModuleError.noModule)
+        return try modules[index].unwrapModule()
     }
-    public func setSourceModule(_ module: Module, at index: Int) throws {
+    public func setSourceModule<T:Module>(_ module: T, at index: Int) throws {
         guard index.isBetween(0 ... modules.count) else {
             throw ModuleError.invalidIndex
         }
         modules[index] = module
     }
-    public func setSourceModule(_ module: Module?, at index: Int) throws {
-        try setSourceModule(module.unwrapOrThrow(ModuleError.noModule), at: index)
+    public func setSourceModule<T:Module>(_ module: T?, at index: Int) throws {
+        try setSourceModule(module.unwrapModule(), at: index)
     }
 }
 

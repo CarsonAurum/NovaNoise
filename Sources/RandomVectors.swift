@@ -2,6 +2,8 @@
 //  Created by Carson Rau on 5/7/22.
 //
 
+import NovaCore
+
 internal let randomVectors: [Double] = [
 // =========[x]=============[y]=============[z]========[pad]=======================================
         -0.763874,      -0.596439,      -0.246489,      0.0,

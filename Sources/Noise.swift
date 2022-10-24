@@ -2,6 +2,8 @@
 //  Created by Carson Rau on 5/7/22.
 //
 
+import NovaCore
+
 public enum Noise {
     public static let noiseX = 1619
     public static let noiseY = 31337
@@ -76,7 +78,7 @@ public enum Noise {
     }
     // MARK: Value Noise
     public static func valueCoherentNoise3D(
-        _ x: Double, _ y: Double, z: Double,
+        _ x: Double, _ y: Double, _ z: Double,
         seed: Int, quality: Quality
     ) -> Double {
         let x0: Int = x > 0.0 ? .init(x) : .init(x - 1),
@@ -125,5 +127,17 @@ public enum Noise {
             return (n * (n * n * 60493 + 19990303) + 1376312589) & 0x7fffffff
         }
         return 1.0 - (.init(noise3D(x, y, z, seed: seed)) / 1073741824.0)
+    }
+}
+
+public extension Noise {
+    static func gradientCoherentNoise3D(point: Point3D, seed: Int, quality: Quality) -> Double {
+        gradientCoherentNoise3D(point.x, point.y, point.z, seed: seed, quality: quality)
+    }
+    static func valueCoherentNoise3D(point: Point3D, seed: Int, quality: Quality) -> Double {
+        valueCoherentNoise3D(point.x, point.y, point.z, seed: seed, quality: quality)
+    }
+    static func valueNoise3D(point: Point3D, seed: Int) -> Double {
+        valueNoise3D(.init(point.x), .init(point.y), .init(point.z), seed: seed)
     }
 }

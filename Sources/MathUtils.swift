@@ -4,7 +4,11 @@
 
 import NovaCore
 
-internal func cubicInterp(_ n0: Double, _ n1: Double, _ n2: Double, _ n3: Double, _ a: Double) -> Double {
+internal let squareDouble = 2 |> flip(curry(Double.pow))
+
+internal func cubicInterp(
+    _ n0: Double, _ n1: Double, _ n2: Double, _ n3: Double, _ a: Double
+) -> Double {
     let p = (n3 - n2) - (n0 - n1)
     let q = n0 - n1 - p
     let r = n2 - n0
@@ -16,7 +20,7 @@ internal func linearInterp(_ n0: Double, _ n1: Double, _ a: Double) -> Double {
 }
 
 internal func sCurve3(_ a: Double) -> Double {
-    (a * a * (3.0 - 2.0 * a))
+    Double.pow(a, 2) * (3.0 - 2.0 * a)
 }
 
 internal func sCurve5(_ a: Double) -> Double {
@@ -26,20 +30,30 @@ internal func sCurve5(_ a: Double) -> Double {
     return (6.0 * a5) - (15.0 * a4) + (10.0 * a3)
 }
 
-internal func toCartesian(lat: Double, lon: Double) -> (Double, Double, Double) {
+internal func toCartesian(lat: Double, lon: Double) -> Point3D {
     let r = Double.cos(lat.degreesToRadian)
     let x = r * Double.cos(lon.degreesToRadian)
     let y = Double.sin(lat.degreesToRadian)
     let z = r * Double.sin(lon.degreesToRadian)
-    return (x, y, z)
+    return .init(x, y, z)
 }
 
 internal func clampTo32Bits(_ n: Double) -> Double {
-    if n >= 1073741824.0 {
-        return (2.0 * n % 1073741824.0) - 1073741824.0
-    } else if n <= -1073741824.0 {
-        return (2.0 * n % 1073741824.0) + 1073741824.0
+    let boundary: Double = 0b1000000000000000000000000000000
+    if n >= boundary {
+        return (2.0 * n % boundary) - boundary
+    } else if n <= -boundary {
+        return (2.0 * n % boundary) + boundary
     } else {
         return n
+    }
+}
+
+internal extension Point3D {
+    func clamped() -> Point3D {
+        .init(clampTo32Bits(x), clampTo32Bits(y), clampTo32Bits(z))
+    }
+    mutating func clamp() {
+        self = clamped()
     }
 }
