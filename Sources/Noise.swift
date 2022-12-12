@@ -69,10 +69,7 @@ public enum Noise {
         let xvGradient = randomVectors[vectorIndex << 2],
             yvGradient = randomVectors[(vectorIndex << 2) + 1],
             zvGradient = randomVectors[(vectorIndex << 2) + 2]
-        let xvPoint = (fx - .init(ix)),
-            yvPoint = (fy - .init(iy)),
-            zvPoint = (fz - .init(iz))
-
+        let xvPoint = (fx - .init(ix)), yvPoint = (fy - .init(iy)), zvPoint = (fz - .init(iz))
         return ((xvGradient * xvPoint) + (yvGradient * yvPoint) + (zvGradient * zvPoint)) * 2.12
     
     }

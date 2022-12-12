@@ -112,8 +112,7 @@ public final class Multiply: Module {
         super.init(sourceCount: 2)
     }
     public func getValue(x: Double, y: Double, z: Double) throws -> Double {
-        try modules[0].unwrapModule().getValue(x, y, z)
-          * modules[1].unwrapModule().getValue(x, y, z)
+        try modules[0].unwrapModule().getValue(x, y, z) * modules[1].unwrapModule().getValue(x, y, z)
     }
 }
 
@@ -203,7 +202,7 @@ public final class Select: Module {
             if !controlValue.isBetween(lowerBound...upperBound) {
                 return try modules[0].unwrapModule().getValue(x, y, z)
             } else {
-                return try modules[1].unwrapOrThrow(ModuleError.noModule).getValue(x, y, z)
+                return try modules[1].unwrapModule().getValue(x, y, z)
             }
         }
     }
